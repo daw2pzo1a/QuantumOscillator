@@ -111,6 +111,7 @@ target_link_libraries(implot
 # приложение
 add_executable(QuantumOscillator
     src/main.cpp
+    src/core/QuantumSystem.cpp
 )
 
 target_link_libraries(QuantumOscillator
