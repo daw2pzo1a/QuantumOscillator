@@ -112,6 +112,9 @@ target_link_libraries(implot
 add_executable(QuantumOscillator
     src/main.cpp
     src/core/QuantumSystem.cpp
+    src/math/Grid.cpp
+    src/math/FiniteDifference.cpp
+    src/math/TrigSweepSolver.cpp
 )
 
 target_link_libraries(QuantumOscillator
