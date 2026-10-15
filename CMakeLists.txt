@@ -115,6 +115,8 @@ add_executable(QuantumOscillator
     src/math/Grid.cpp
     src/math/FiniteDifference.cpp
     src/math/TrigSweepSolver.cpp
+    src/math/SpectrumSolver.cpp
+    src/math/WaveFunctionSolver.cpp
 )
 
 target_link_libraries(QuantumOscillator
