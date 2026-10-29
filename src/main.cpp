@@ -239,15 +239,16 @@ int main()
                 {
                     const int centerIndex = grid.FindNearestIndex(0.0);
 
-                    if (centerIndex >= 0)
-                    {
-                        const double centerXi = grid.GetPoint(centerIndex);
-
 
                         double gaussianPosition = 0.0;
 
                         if (barrierIndex >= 0)
                             gaussianPosition = grid.GetPoint(barrierIndex);
+
+                    if (centerIndex >= 0)
+                    {
+                        const double centerXi = grid.GetPoint(centerIndex);
+
 
                         const double centerA = FiniteDifference::CalculateA(centerXi, grid.GetStep(), testEnergy, g, 
                         gaussianPosition, config.barrierSigma);
