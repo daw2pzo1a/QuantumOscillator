@@ -240,10 +240,10 @@ int main()
                     const int centerIndex = grid.FindNearestIndex(0.0);
 
 
-                        double gaussianPosition = 0.0;
+                    double gaussianPosition = 0.0;
 
-                        if (barrierIndex >= 0)
-                            gaussianPosition = grid.GetPoint(barrierIndex);
+                    if (barrierIndex >= 0)
+                        gaussianPosition = grid.GetPoint(barrierIndex);
 
                     if (centerIndex >= 0)
                     {
