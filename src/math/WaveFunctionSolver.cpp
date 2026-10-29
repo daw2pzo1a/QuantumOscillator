@@ -35,13 +35,12 @@ WaveFunctionData WaveFunctionSolver::Calculate(
     for (int i = 1; i <= matchIndex; ++i)
     {
         const double xi = grid.GetPoint(i);
-        const bool barrierNode = i == barrierIndex;
         const double A = FiniteDifference::CalculateA(
             xi,
             h,
             epsilon,
             barrierStrength,
-            barrierNode,
+            barrierPosition,
             barrierSigma
         );
 
@@ -54,13 +53,12 @@ WaveFunctionData WaveFunctionSolver::Calculate(
     for (int i = count - 2; i >= matchIndex + 1; --i)
     {
         const double xi = grid.GetPoint(i);
-        const bool barrierNode = i == barrierIndex;
         const double A = FiniteDifference::CalculateA(
             xi,
             h,
             epsilon,
             barrierStrength,
-            barrierNode,
+            barrierPosition,
             barrierSigma
         );
 

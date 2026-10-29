@@ -242,9 +242,15 @@ int main()
                     if (centerIndex >= 0)
                     {
                         const double centerXi = grid.GetPoint(centerIndex);
-                        const bool centerIsBarrier = centerIndex == barrierIndex;
+
+
+                        double gaussianPosition = 0.0;
+
+                        if (barrierIndex >= 0)
+                            gaussianPosition = grid.GetPoint(barrierIndex);
+
                         const double centerA = FiniteDifference::CalculateA(centerXi, grid.GetStep(), testEnergy, g, 
-                        centerIsBarrier, config.barrierSigma);
+                        gaussianPosition, config.barrierSigma);
 
                         ImGui::Text("Индекс центра = %d", centerIndex);
                         ImGui::Text("xi в центре = %.10f", centerXi);
@@ -254,7 +260,8 @@ int main()
                     if (barrierIndex >= 0)
                     {
                         const double barrierXi = grid.GetPoint(barrierIndex);
-                        const double barrierA = FiniteDifference::CalculateA(barrierXi, grid.GetStep(), testEnergy, g, true, config.barrierSigma);
+                        const double barrierA = FiniteDifference::CalculateA(barrierXi, grid.GetStep(), testEnergy, g, 
+                        gaussianPosition, config.barrierSigma);
                         ImGui::Text("A в точке барьера = %.12f", barrierA);
                     }
 
