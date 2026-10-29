@@ -113,6 +113,10 @@ int main()
             ImGui::Text("Положение барьера a, м");
             ImGui::SetNextItemWidth(-1.0f);
             parametersChanged |= ImGui::InputDouble("##barrierPosition", &config.barrierPosition, 0.0, 0.0, "%.6e");
+
+            ImGui::Text("Ширина гауссова барьера sigma");
+            ImGui::SetNextItemWidth(-1.0f);
+            parametersChanged |= ImGui::InputDouble("##barrierSigma", &config.barrierSigma, 0.0, 0.0, "%.6f");
         }
 
         if (ImGui::CollapsingHeader("Расчетная область", ImGuiTreeNodeFlags_DefaultOpen))
@@ -167,7 +171,7 @@ int main()
             gridValid &&
             config.energyMax > config.energyMin &&
             config.energySamples >= 2 &&
-            config.tolerance > 0.0;
+            config.tolerance > 0.0 && config.barrierSigma > 0.0;
 
         double alpha = 0.0;
         double g = 0.0;
@@ -239,7 +243,8 @@ int main()
                     {
                         const double centerXi = grid.GetPoint(centerIndex);
                         const bool centerIsBarrier = centerIndex == barrierIndex;
-                        const double centerA = FiniteDifference::CalculateA(centerXi, grid.GetStep(), testEnergy, g, centerIsBarrier);
+                        const double centerA = FiniteDifference::CalculateA(centerXi, grid.GetStep(), testEnergy, g, 
+                        centerIsBarrier, config.barrierSigma);
 
                         ImGui::Text("Индекс центра = %d", centerIndex);
                         ImGui::Text("xi в центре = %.10f", centerXi);
@@ -249,12 +254,14 @@ int main()
                     if (barrierIndex >= 0)
                     {
                         const double barrierXi = grid.GetPoint(barrierIndex);
-                        const double barrierA = FiniteDifference::CalculateA(barrierXi, grid.GetStep(), testEnergy, g, true);
+                        const double barrierA = FiniteDifference::CalculateA(barrierXi, grid.GetStep(), testEnergy, g, true, config.barrierSigma);
                         ImGui::Text("A в точке барьера = %.12f", barrierA);
                     }
 
-                    const double rightPhase = trigSweepSolver.CalculateRightPhase(grid, testEnergy, g, barrierIndex);
-                    const double rightPhaseOverPi = trigSweepSolver.CalculateRightPhaseOverPi(grid, testEnergy, g, barrierIndex);
+                    const double rightPhase = trigSweepSolver.CalculateRightPhase(grid, testEnergy, g, 
+                        barrierIndex, config.barrierSigma);
+                    const double rightPhaseOverPi = trigSweepSolver.CalculateRightPhaseOverPi(grid, testEnergy, g, 
+                        barrierIndex, config.barrierSigma);
 
                     ImGui::TextWrapped("Фаза справа theta = %.12f рад", rightPhase);
                     ImGui::TextWrapped("theta / pi = %.12f", rightPhaseOverPi);
@@ -286,6 +293,7 @@ int main()
                         config.energySamples,
                         g,
                         barrierIndex,
+                        config.barrierSigma,
                         config.tolerance
                     );
 
@@ -355,6 +363,7 @@ int main()
                         eigenvalue,
                         g,
                         barrierIndex,
+                        config.barrierSigma,
                         config.stateIndex
                     );
                 }

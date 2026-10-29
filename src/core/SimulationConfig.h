@@ -18,6 +18,9 @@ struct SimulationConfig
     // Положение дельта-барьера, м
     double barrierPosition = 0.0;
 
+    // Ширина дельта-барьера, м
+    double barrierSigma = 0.05;
+
     // Численные параметры
     // Границы расчета уже в безразмерной координате xi
     double xiLeft = -8.0;

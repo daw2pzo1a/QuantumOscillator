@@ -4,7 +4,7 @@
 #include <cmath>
 #include <limits>
 
-double TrigSweepSolver::CalculateRightPhase(const Grid& grid, double epsilon, double barrierStrength, int barrierIndex) const
+double TrigSweepSolver::CalculateRightPhase(const Grid& grid, double epsilon, double barrierStrength, int barrierIndex, double barrierSigma) const
 {
     if (!grid.IsValid() || grid.GetPointCount() < 3)
         return std::numeric_limits<double>::quiet_NaN();
@@ -12,11 +12,22 @@ double TrigSweepSolver::CalculateRightPhase(const Grid& grid, double epsilon, do
     double theta = kPI / 2.0;
     const double h = grid.GetStep();
 
+    double barrierPosition = 0.0;
+    if (barrierIndex >= 0)
+        barrierPosition = grid.GetPoint(barrierIndex);
+
     for (int i = 1; i < grid.GetPointCount() - 1; ++i)
     {
         const double xi = grid.GetPoint(i);
         const bool barrierNode = i == barrierIndex;
-        const double A = FiniteDifference::CalculateA(xi, h, epsilon, barrierStrength, barrierNode);
+        const double A = FiniteDifference::CalculateA(
+            xi,
+            h,
+            epsilon,
+            barrierStrength,
+            barrierPosition,
+            barrierSigma
+        );
 
         const double sinTheta = std::sin(theta);
         const double cosTheta = std::cos(theta);
@@ -29,9 +40,9 @@ double TrigSweepSolver::CalculateRightPhase(const Grid& grid, double epsilon, do
     return theta;
 }
 
-double TrigSweepSolver::CalculateRightPhaseOverPi(const Grid& grid, double epsilon, double barrierStrength, int barrierIndex) const
+double TrigSweepSolver::CalculateRightPhaseOverPi(const Grid& grid, double epsilon, double barrierStrength, int barrierIndex, double barrierSigma) const
 {
-    return CalculateRightPhase(grid, epsilon, barrierStrength, barrierIndex) / kPI;
+    return CalculateRightPhase(grid, epsilon, barrierStrength, barrierIndex, barrierSigma) / kPI;
 }
 
 double TrigSweepSolver::UnwrapPhase(double phase, double previousPhase) const

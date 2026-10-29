@@ -5,8 +5,8 @@
 class TrigSweepSolver
 {
 public:
-    double CalculateRightPhase(const Grid& grid, double epsilon, double barrierStrength, int barrierIndex) const;
-    double CalculateRightPhaseOverPi(const Grid& grid, double epsilon, double barrierStrength, int barrierIndex) const;
+    double CalculateRightPhase(const Grid& grid, double epsilon, double barrierStrength, int barrierIndex, double barrierSigma) const;
+    double CalculateRightPhaseOverPi(const Grid& grid, double epsilon, double barrierStrength, int barrierIndex, double barrierSigma) const;
 
 private:
     double UnwrapPhase(double phase, double previousPhase) const;

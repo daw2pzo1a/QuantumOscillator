@@ -8,6 +8,7 @@ WaveFunctionData WaveFunctionSolver::Calculate(
     double epsilon,
     double barrierStrength,
     int barrierIndex,
+    double barrierSigma,
     int stateIndex
 ) const
 {
@@ -15,6 +16,11 @@ WaveFunctionData WaveFunctionSolver::Calculate(
 
     if (!grid.IsValid() || grid.GetPointCount() < 5)
         return data;
+    
+    double barrierPosition = 0.0;
+
+    if (barrierIndex >= 0)
+        barrierPosition = grid.GetPoint(barrierIndex);
 
     const int count = grid.GetPointCount();
     const double h = grid.GetStep();
@@ -35,7 +41,8 @@ WaveFunctionData WaveFunctionSolver::Calculate(
             h,
             epsilon,
             barrierStrength,
-            barrierNode
+            barrierNode,
+            barrierSigma
         );
 
         left[i + 1] = A * left[i] - left[i - 1];
@@ -53,7 +60,8 @@ WaveFunctionData WaveFunctionSolver::Calculate(
             h,
             epsilon,
             barrierStrength,
-            barrierNode
+            barrierNode,
+            barrierSigma
         );
 
         right[i - 1] = A * right[i] - right[i + 1];

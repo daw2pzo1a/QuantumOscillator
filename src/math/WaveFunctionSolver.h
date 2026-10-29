@@ -11,6 +11,7 @@ public:
         double epsilon,
         double barrierStrength,
         int barrierIndex,
+        double barrierSigma,
         int stateIndex
     ) const;
 

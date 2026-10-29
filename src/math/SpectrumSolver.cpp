@@ -1,7 +1,8 @@
 #include "SpectrumSolver.h"
 #include <cmath>
 
-SpectrumData SpectrumSolver::Calculate(const Grid& grid, double energyMin, double energyMax, int energySamples, double barrierStrength, int barrierIndex, double tolerance) const
+SpectrumData SpectrumSolver::Calculate(const Grid& grid, double energyMin, double energyMax, int energySamples, 
+    double barrierStrength, int barrierIndex, double barrierSigma, double tolerance) const
 {
     SpectrumData data;
 
@@ -14,12 +15,12 @@ SpectrumData SpectrumSolver::Calculate(const Grid& grid, double energyMin, doubl
     const double energyStep = (energyMax - energyMin) / static_cast<double>(energySamples - 1);
 
     double previousEnergy = energyMin;
-    double previousResidual = BoundaryResidual(grid, previousEnergy, barrierStrength, barrierIndex);
+    double previousResidual = BoundaryResidual(grid, previousEnergy, barrierStrength, barrierIndex, barrierSigma);
 
     for (int i = 0; i < energySamples; ++i)
     {
         const double epsilon = energyMin + static_cast<double>(i) * energyStep;
-        const double phaseOverPi = trigSweepSolver_.CalculateRightPhaseOverPi(grid, epsilon, barrierStrength, barrierIndex);
+        const double phaseOverPi = trigSweepSolver_.CalculateRightPhaseOverPi(grid, epsilon, barrierStrength, barrierIndex, barrierSigma);
 
         data.energies.push_back(epsilon);
         data.phasesOverPi.push_back(phaseOverPi);
@@ -27,11 +28,11 @@ SpectrumData SpectrumSolver::Calculate(const Grid& grid, double energyMin, doubl
         if (i == 0)
             continue;
 
-        const double residual = BoundaryResidual(grid, epsilon, barrierStrength, barrierIndex);
+        const double residual = BoundaryResidual(grid, epsilon, barrierStrength, barrierIndex, barrierSigma);
 
         if (previousResidual * residual < 0.0)
         {
-            const double eigenvalue = FindEigenvalue(grid, previousEnergy, epsilon, barrierStrength, barrierIndex, tolerance);
+            const double eigenvalue = FindEigenvalue(grid, previousEnergy, epsilon, barrierStrength, barrierIndex, barrierSigma, tolerance);
 
             if (data.eigenvalues.empty() || std::abs(eigenvalue - data.eigenvalues.back()) > tolerance * 10.0)
                 data.eigenvalues.push_back(eigenvalue);
@@ -44,22 +45,22 @@ SpectrumData SpectrumSolver::Calculate(const Grid& grid, double energyMin, doubl
     return data;
 }
 
-double SpectrumSolver::BoundaryResidual(const Grid& grid, double epsilon, double barrierStrength, int barrierIndex) const
+double SpectrumSolver::BoundaryResidual(const Grid& grid, double epsilon, double barrierStrength, int barrierIndex, double barrierSigma) const
 {
-    const double phase = trigSweepSolver_.CalculateRightPhase(grid, epsilon, barrierStrength, barrierIndex);
+    const double phase = trigSweepSolver_.CalculateRightPhase(grid, epsilon, barrierStrength, barrierIndex, barrierSigma);
     return std::sin(phase);
 }
 
-double SpectrumSolver::FindEigenvalue(const Grid& grid, double leftEnergy, double rightEnergy, double barrierStrength, int barrierIndex, double tolerance) const
+double SpectrumSolver::FindEigenvalue(const Grid& grid, double leftEnergy, double rightEnergy, double barrierStrength, int barrierIndex, double barrierSigma, double tolerance) const
 {
     double left = leftEnergy;
     double right = rightEnergy;
-    double leftResidual = BoundaryResidual(grid, left, barrierStrength, barrierIndex);
+    double leftResidual = BoundaryResidual(grid, left, barrierStrength, barrierIndex, barrierSigma);
 
     for (int iteration = 0; iteration < 100; ++iteration)
     {
         const double middle = 0.5 * (left + right);
-        const double middleResidual = BoundaryResidual(grid, middle, barrierStrength, barrierIndex);
+        const double middleResidual = BoundaryResidual(grid, middle, barrierStrength, barrierIndex, barrierSigma);
 
         if (std::abs(right - left) < tolerance)
             return middle;
